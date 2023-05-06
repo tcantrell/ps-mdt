@@ -913,7 +913,8 @@ QBCore.Functions.CreateCallback('mdt:server:SearchVehicles', function(source, cb
 	if Player then
 		local JobType = GetJobType(Player.PlayerData.job.name)
 		if JobType == 'police' or JobType == 'doj' then
-			local vehicles = MySQL.query.await("SELECT pv.id, pv.citizenid, pv.plate, pv.vehicle, pv.mods, pv.state, p.charinfo FROM `player_vehicles` pv LEFT JOIN players p ON pv.citizenid = p.citizenid WHERE LOWER(`plate`) LIKE :query OR LOWER(`vehicle`) LIKE :query LIMIT 25", {
+			--edit m-Insurance
+			local vehicles = MySQL.query.await("SELECT pv.id, pv.citizenid, pv.plate, pv.vehicle, pv.mods, pv.state, pv.insurance, pv.registration, p.charinfo FROM `player_vehicles` pv LEFT JOIN players p ON pv.citizenid = p.citizenid WHERE LOWER(`plate`) LIKE :query OR LOWER(`vehicle`) LIKE :query LIMIT 25", {
 				query = string.lower('%'..sentData..'%')
 			})
 
@@ -933,6 +934,40 @@ QBCore.Functions.CreateCallback('mdt:server:SearchVehicles', function(source, cb
 				if boloResult then
 					value.bolo = true
 				end
+
+				--add m-Insurance
+				
+				if not value.insurance then
+					value.insurance = nil
+				else
+					value.insurance = tonumber(value.insurance)
+					local timeInSeconds = os.time(os.date('*t'))
+					if (timeInSeconds >= value.insurance) then
+						value.insurance = "Expired"
+					else
+						local dateObj = os.date("*t", value.insurance)
+						local date = dateObj.day.."/"..dateObj.month.."/"..dateObj.year
+						value.insurance = date
+					end
+				end
+
+				if not value.registration then
+					value.registration = nil
+				else
+					value.registration = tonumber(value.registration)
+					local timeInSeconds = os.time(os.date('*t'))
+					if (timeInSeconds >= value.registration) then
+						value.registration = "Expired"
+					elseif (value.registration == 2556143999) then
+						value.registration = "Confirmed"
+					else
+						local dateObj = os.date("*t", value.registration)
+						local date = dateObj.day.."/"..dateObj.month.."/"..dateObj.year
+						value.registration = date
+					end
+				end
+
+				-- end add m-Insurance
 
 				value.code = false
 				value.stolen = false
@@ -982,6 +1017,41 @@ RegisterNetEvent('mdt:server:getVehicleData', function(plate)
 					vehicle[1]['color1'] = color1['color1']
 
 					vehicle[1]['dbid'] = 0
+
+					--add m-Insurance
+
+					vehicle[1].insurance = nil
+					vehicle[1].registration = nil
+
+					if not vehicle[1].insurance then
+						vehicle[1].insurance = nil
+						else
+							local timeInSeconds = os.time(os.date('*t'))
+							if (timeInSeconds >= vehicle[1].insurance) then
+								vehicle[1].insurance = "Expired"
+							else
+								local dateObj = os.date("*t", vehicle[1].insurance)
+								local date = dateObj.day.."/"..dateObj.month.."/"..dateObj.year
+								vehicle[1].insurance = date
+							end
+					end
+
+					if not vehicle[1].registration then
+						vehicle[1].insurance = nil
+						else
+							local timeInSeconds = os.time(os.date('*t'))
+							if (timeInSeconds >= vehicle[1].insurance) then
+								vehicle[1].insurance = "Expired"
+							elseif (vehicle[1].registration == 2556143999) then
+								vehicle[1].insurance = "Confirmed"
+							else
+								local dateObj = os.date("*t", vehicle[1].insurance)
+								local date = dateObj.day.."/"..dateObj.month.."/"..dateObj.year
+								vehicle[1].insurance = date
+							end
+					end
+
+					-- end add m-Insurance
 
 					local info = GetVehicleInformation(vehicle[1]['plate'])
 					if info then
