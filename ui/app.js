@@ -2669,6 +2669,25 @@ $(document).ready(() => {
             stolen = "green-tag";
           }
 
+           //m-Insurance
+           let insurance = "green-tag";
+
+           if (value.insurance == 'Expired') {
+            insurance = "red-tag";
+          } else if (!value.insurance) {
+            insurance = "red-tag";
+            value.insurance = "Don't have"
+          }
+
+          let registration = "green-tag";
+
+          if (value.registration == 'Expired') {
+            registration = "red-tag";
+          } else if (!value.registration) {
+            registration = "red-tag";
+            value.registration = "Don't have"
+          }
+
           vehicleHTML += `
                         <div class="dmv-item" data-id="${value.id}" data-dbid="${value.dbid}" data-plate="${value.plate}">
                             <img src="${value.image}" class="dmv-image">
@@ -2681,6 +2700,9 @@ $(document).ready(() => {
                                         <div class="dmv-tag ${bolo}">BOLO</div>
                                         <div class="dmv-tag ${stolen}">Stolen</div>
                                         <div class="dmv-tag ${codefive}">Code 5</div>
+                                        <!-- m-Insurance -->
+                                        <div class="dmv-tag ${insurance}">Insurance: ${value.insurance}</div>
+                                        <div class="dmv-tag ${registration}">Registration: ${value.registration}</div>
                                     </div>
                                 </div>
                                 <div class="dmv-bottom-info">
@@ -5211,10 +5233,32 @@ window.addEventListener("message", function (event) {
         stolen = "green-tag";
       }
 
+      //m-Insurance
+      let insurance = "green-tag";
+
+      if (table.insurance == 'Expired') {
+        insurance = "red-tag";
+      } else if (!table.insurance) {
+        insurance = "red-tag";
+        table.insurance = "Don't have"
+      }
+
+      let registration = "green-tag";
+
+      if (table.registration == 'Expired') {
+        registration = "red-tag";
+      } else if (!table.registration) {
+        registration = "red-tag";
+        table.registration = "Don't have"
+      }
+
       $(".vehicle-tags").append(`<div class="vehicle-tag ${impound} impound-tag">Impound</div>`);
       $(".vehicle-tags").append(`<div class="vehicle-tag ${bolo}">BOLO</div>`);
       $(".vehicle-tags").append(`<div class="vehicle-tag ${codefive} code5-tag">Code 5</div>`);
       $(".vehicle-tags").append(`<div class="vehicle-tag ${stolen} stolen-tag">Stolen</div>`);
+      // m-Insurance
+      $(".vehicle-tags").append(`<div class="vehicle-tag ${insurance} stolen-tag">Insurance: ${table.insurance}</div>`)
+      $(".vehicle-tags").append(`<div class="vehicle-tag ${registration} stolen-tag">Registration: ${table.registration}</div>`)
       $(".vehicle-info-imageurl-input").val(table["image"]);
     } else if (eventData.type == "getWeaponData") {
       impoundChanged = false;
